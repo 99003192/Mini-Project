@@ -1,17 +1,53 @@
-OBJS	= digitalclock.o
-SOURCE	= digitalclock.c
-HEADER	= 
-OUT	= final.out
-CC	 = gcc
-FLAGS	 = -g -c -Wall
-LFLAGS	 = 
+# Name of the project
+PROJECT_NAME = digitalclock
 
-all: $(OBJS)
-	$(CC) -g $(OBJS) -o $(OUT) $(LFLAGS)
+# Output directory
+BUILD = build
 
-digitalclock.o: digitalclock.c
-	$(CC) $(FLAGS) digitalclock.c 
+# All source code files
+SRC = main.c\
+src/digitalclock.c\
 
+# All test source files
+TEST_SRC = src/digitalclock.c\
+test/test_digitalclock.c
 
+TEST_OUTPUT = $(BUILD)/Test_$(PROJECT_NAME).out
+
+# All include folders with header files
+INC	= -Iinc
+
+PROJECT_OUTPUT = $(BUILD)/$(PROJECT_NAME).out
+
+# Document files
+DOCUMENTATION_OUTPUT = documentation/html
+
+# Default target built
+$(PROJECT_NAME):all
+
+# Run the target even if the matching name exists
+.PHONY: run clean test  doc all
+
+all: $(SRC) $(BUILD)
+	gcc $(SRC) $(INC) -o $(final).out -lm
+
+# Call `make run` to run the application
+run:$(PROJECT_NAME)
+	./$(final).out
+
+# Document the code using Doxygen
+doc:
+	make -C ./documentation
+
+# Build and run the unit tests
+test:$(BUILD)
+	gcc $(TEST_SRC) $(INC) -o $(TEST_OUTPUT) -lcunit -lm
+	./$(TEST_OUTPUT)
+
+# Remove all the built files, invoke by `make clean`
 clean:
-	rm -f $(OBJS) $(OUT)
+	rm -rf $(BUILD) $(DOCUMENTATION_OUTPUT)
+
+# Create new build folder if not present
+$(BUILD):
+	mkdir build
